@@ -13,6 +13,7 @@ const signIn = async (req, res) => {
     if (!validPassword) return res.status(401).json({ error: 'Invalid credentials' })
 
     req.session.user = user
+    delete user.password
     res.json(user)
   } catch (err) {
     res.status(500).json({ error: err.message })
