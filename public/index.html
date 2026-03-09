@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>MyBaseCamp</title>
+  <link rel="stylesheet" href="css/style.css" />
+</head>
+<body>
+
+  <!-- nav bar -->
+  <nav id="navbar" style="display:none;">
+    <h2>MyBaseCamp</h2>
+    <div>
+      <span id="nav-username"></span>
+      <button onclick="showPage('projects')">Projects</button>
+      <button onclick="signOut()">Sign Out</button>
+    </div>
+  </nav>
+
+  <!-- landing page -->
+  <div id="page-landing">
+    <h1>MyBaseCamp</h1>
+    <p>Manage your projects easily</p>
+    <button onclick="showPage('register')">Register</button>
+    <button onclick="showPage('login')">Login</button>
+  </div>
+
+  <!-- register  -->
+  <div id="page-register" style="display:none;">
+    <h2>Create Account</h2>
+
+    <label>Full Name:</label>
+    <input type="text" id="reg-name" placeholder="Your full name" />
+
+    <label>Email:</label>
+    <input type="email" id="reg-email" placeholder="email@example.com" />
+
+    <label>Password:</label>
+    <input type="password" id="reg-password" placeholder="Password" />
+
+    <p id="reg-error" style="color:red; display:none;"></p>
+
+    <button onclick="register()">Register</button>
+    <button onclick="showPage('login')">Already have an account? Login</button>
+  </div>
+
+  <!-- login -->
+  <div id="page-login" style="display:none;">
+    <h2>Login</h2>
+
+    <label>Email:</label>
+    <input type="email" id="login-email" placeholder="email@example.com" />
+
+    <label>Password:</label>
+    <input type="password" id="login-password" placeholder="Password" />
+
+    <p id="login-error" style="color:red; display:none;"></p>
+
+    <button onclick="login()">Login</button>
+    <button onclick="showPage('register')">No account? Register</button>
+  </div>
+
+  <!-- projects page -->
+  <div id="page-projects" style="display:none;">
+    <h2>Projects</h2>
+    <button onclick="showPage('new-project')">+ New Project</button>
+
+    <div id="projects-list">
+
+    </div>
+  </div>
+
+  <!-- New project page -->
+  <div id="page-new-project" style="display:none;">
+    <h2>Create New Project</h2>
+
+    <label>Project Name:</label>
+    <input type="text" id="proj-name" placeholder="Project name" />
+
+    <label>Description:</label>
+    <textarea id="proj-desc" placeholder="About this project..." rows="4"></textarea>
+
+    <p id="proj-error" style="color:red; display:none;"></p>
+
+    <button onclick="createProject()">Create</button>
+    <button onclick="showPage('projects')">Go Back</button>
+  </div>
+
+  <!-- project detail -->
+  <div id="page-project-detail" style="display:none;">
+    <button onclick="showPage('projects')">← Back</button>
+    <h2 id="detail-name"></h2>
+    <p id="detail-desc"></p>
+
+    <button onclick="showEditForm()">Edit</button>
+    <button onclick="deleteProject()">Delete</button>
+
+    <!-- edit form (hidden by default) -->
+    <div id="edit-form" style="display:none;">
+      <h3>Edit Project</h3>
+
+      <label>Name:</label>
+      <input type="text" id="edit-name" />
+
+      <label>Description:</label>
+      <textarea id="edit-desc" rows="3"></textarea>
+
+      <button onclick="updateProject()">Save</button>
+      <button onclick="hideEditForm()">Cancel</button>
+    </div>
+  </div>
+
+  <script src="js/app.js"></script>
+</body>
+</html>
