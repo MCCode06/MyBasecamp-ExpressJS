@@ -1,56 +1,62 @@
-// ---- Current user and projects 
 var currentUser = null;
 var currentProjectId = null;
 
-// ---- Show / hide pages  
+
 function showPage(pageName) {
-  // Hide all pages
-  var pages = document.querySelectorAll('div[id^="page-"]');
+  var pages = document.querySelectorAll('.page');
   for (var i = 0; i < pages.length; i++) {
     pages[i].style.display = 'none';
   }
 
-  // Show the selected page
   document.getElementById('page-' + pageName).style.display = 'block';
 
-  // Load projects when switching to the projects page
   if (pageName === 'projects') {
     loadProjects();
   }
+
+  if (pageName === 'admin') {
+    loadUsers();
+  }
 }
 
-// ---- Show / hide navbar  
+
 function showNavbar(user) {
   document.getElementById('navbar').style.display = 'flex';
   document.getElementById('nav-username').textContent = user.name || user.email;
+
+  if (user.role === 'admin') {
+    document.getElementById('admin-btn').style.display = 'inline-block';
+  }
+  
+  else {
+    document.getElementById('admin-btn').style.display = 'none';
+  }
 }
 
 function hideNavbar() {
   document.getElementById('navbar').style.display = 'none';
 }
 
-// ---- Show / hide error messages  
+
 function showError(elementId, message) {
   var errorEl = document.getElementById(elementId);
   errorEl.textContent = message;
   errorEl.style.display = 'block';
 }
 
+
 function hideError(elementId) {
   document.getElementById(elementId).style.display = 'none';
 }
 
-// ---- register  
+
 async function register() {
-  // Hide old error
   hideError('reg-error');
 
-  //-
   var name = document.getElementById('reg-name').value;
   var email = document.getElementById('reg-email').value;
   var password = document.getElementById('reg-password').value;
 
-  
   if (name === '' || email === '' || password === '') {
     showError('reg-error', 'Please fill in all fields!');
     return;
@@ -66,12 +72,13 @@ async function register() {
 
   if (response.ok) {
     loginWithEmailPassword(email, password);
-  } else {
+  } 
+  else {
     showError('reg-error', data.error || 'Something went wrong!');
   }
 }
 
-// ---- Login  
+
 async function login() {
   hideError('login-error');
 
@@ -96,16 +103,16 @@ async function loginWithEmailPassword(email, password) {
   var data = await response.json();
 
   if (response.ok) {
-    // Login successful
     currentUser = data.user || data;
     showNavbar(currentUser);
     showPage('projects');
-  } else {
+  } 
+  else {
     showError('login-error', data.error || 'Wrong email or password!');
   }
 }
 
-// ---- Sign out  
+
 async function signOut() {
   await fetch('/session', { method: 'DELETE' });
 
@@ -114,7 +121,9 @@ async function signOut() {
   showPage('landing');
 }
 
-// ----- load projects  
+
+
+
 async function loadProjects() {
   var listDiv = document.getElementById('projects-list');
   listDiv.innerHTML = '<p>Loading...</p>';
@@ -129,7 +138,6 @@ async function loadProjects() {
     return;
   }
 
-  // Create a card for each project
   listDiv.innerHTML = '';
   for (var i = 0; i < projects.length; i++) {
     var proj = projects[i];
@@ -138,12 +146,8 @@ async function loadProjects() {
     card.className = 'project-card';
     card.innerHTML = '<h3>' + proj.name + '</h3><p>' + (proj.description || 'No description') + '</p>';
 
-
-
-
-
-    card.onclick = (function(p) {
-      return function() {
+    card.onclick = (function (p) {
+      return function () {
         openProject(p);
       };
     })(proj);
@@ -152,7 +156,7 @@ async function loadProjects() {
   }
 }
 
-// --- create new project  
+
 async function createProject() {
   hideError('proj-error');
 
@@ -173,33 +177,30 @@ async function createProject() {
   var data = await response.json();
 
   if (response.ok) {
-    // Clear the form and go back to projects
     document.getElementById('proj-name').value = '';
     document.getElementById('proj-desc').value = '';
     showPage('projects');
-  } else {
+  } 
+  else {
     showError('proj-error', data.error || 'Could not create project!');
   }
 }
 
-// ---- open project detail  
+
 function openProject(proj) {
   currentProjectId = proj.id;
 
   document.getElementById('detail-name').textContent = proj.name;
   document.getElementById('detail-desc').textContent = proj.description || 'No description';
 
-  // Fill in the edit form fields
   document.getElementById('edit-name').value = proj.name;
   document.getElementById('edit-desc').value = proj.description || '';
 
-  // Hide edit form
   hideEditForm();
-
   showPage('project-detail');
 }
 
-// ---- delete prjct  
+
 async function deleteProject() {
   var confirmed = confirm('Are you sure you want to delete this project?');
   if (!confirmed) return;
@@ -210,12 +211,13 @@ async function deleteProject() {
 
   if (response.ok) {
     showPage('projects');
-  } else {
+  } 
+  else {
     alert('Could not delete project!');
   }
 }
 
-// ------ edit form  
+
 function showEditForm() {
   document.getElementById('edit-form').style.display = 'block';
 }
@@ -224,7 +226,7 @@ function hideEditForm() {
   document.getElementById('edit-form').style.display = 'none';
 }
 
-// ---- update project  
+
 async function updateProject() {
   var name = document.getElementById('edit-name').value;
   var description = document.getElementById('edit-desc').value;
@@ -241,11 +243,93 @@ async function updateProject() {
   });
 
   if (response.ok) {
-    // Update the info shown on the page
     document.getElementById('detail-name').textContent = name;
     document.getElementById('detail-desc').textContent = description || 'No description';
     hideEditForm();
-  } else {
+  } 
+  else {
     alert('Could not update project!');
+  }
+}
+
+
+
+
+
+
+
+async function loadUsers() {
+  var listDiv = document.getElementById('admin-users-list');
+  listDiv.innerHTML = '<p>Loading...</p>';
+
+
+  var response = await fetch('/users');
+  var data = await response.json();
+
+  var users = Array.isArray(data) ? data : [];
+
+  if (users.length === 0) {
+    listDiv.innerHTML = '<p>No users found.</p>';
+    return;
+  }
+
+
+  listDiv.innerHTML = '';
+  for (var i = 0; i < users.length; i++) {
+    var u = users[i];
+
+    var card = document.createElement('div');
+    card.className = 'user-card';
+    card.id = 'user-card-' + u.id;
+
+
+
+    var roleLabel = u.role === 'admin'
+      ? '<span class="badge-admin">Admin</span>'
+      : '<span class="badge-user">User</span>';
+
+    var actionBtn = '';
+    if (u.id !== currentUser.id) {
+      if (u.role === 'admin') {
+        actionBtn = '<button class="btn-danger" onclick="removeAdmin(' + u.id + ')">Remove Admin</button>';
+      } 
+      else {
+        actionBtn = '<button class="btn-success" onclick="setAdmin(' + u.id + ')">Set Admin</button>';
+      }
+    }
+
+    card.innerHTML =
+      '<div class="user-info">' +
+      '<strong>' + u.name + '</strong>' +
+      '<span>' + u.email + '</span>' +
+      roleLabel +
+      '</div>' +
+      '<div class="user-actions">' + actionBtn + '</div>';
+
+    listDiv.appendChild(card);
+  }
+}
+
+
+async function setAdmin(userId) {
+  var response = await fetch('/users/' + userId + '/admin', { method: 'PUT' });
+
+  if (response.ok) {
+    loadUsers();
+  } 
+  else {
+    alert('Could not set admin!');
+  }
+}
+
+
+async function removeAdmin(userId) {
+  var response = await fetch('/users/' + userId + '/removeadmin', { method: 'PUT' });
+
+  if (response.ok) {
+    loadUsers();
+  } 
+  else {
+    alert('Could not remove admin!');
   }
 }

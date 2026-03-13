@@ -1,32 +1,38 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
   <meta charset="UTF-8" />
   <title>MyBaseCamp</title>
   <link rel="stylesheet" href="css/style.css" />
 </head>
+
 <body>
 
-  <!-- nav bar -->
+
+
   <nav id="navbar" style="display:none;">
     <h2>MyBaseCamp</h2>
     <div>
       <span id="nav-username"></span>
+      <button id="admin-btn" onclick="showPage('admin')" style="display:none;">Admin</button>
       <button onclick="showPage('projects')">Projects</button>
       <button onclick="signOut()">Sign Out</button>
     </div>
   </nav>
 
-  <!-- landing page -->
-  <div id="page-landing">
+
+
+  <div id="page-landing" class="page">
     <h1>MyBaseCamp</h1>
     <p>Manage your projects easily</p>
     <button onclick="showPage('register')">Register</button>
     <button onclick="showPage('login')">Login</button>
   </div>
 
-  <!-- register  -->
-  <div id="page-register" style="display:none;">
+
+
+  <div id="page-register" class="page" style="display:none;">
     <h2>Create Account</h2>
 
     <label>Full Name:</label>
@@ -44,8 +50,12 @@
     <button onclick="showPage('login')">Already have an account? Login</button>
   </div>
 
-  <!-- login -->
-  <div id="page-login" style="display:none;">
+
+
+
+
+
+  <div id="page-login" class="page" style="display:none;">
     <h2>Login</h2>
 
     <label>Email:</label>
@@ -60,18 +70,19 @@
     <button onclick="showPage('register')">No account? Register</button>
   </div>
 
-  <!-- projects page -->
-  <div id="page-projects" style="display:none;">
+  
+
+
+  <div id="page-projects" class="page wide" style="display:none;">
     <h2>Projects</h2>
     <button onclick="showPage('new-project')">+ New Project</button>
-
-    <div id="projects-list">
-
-    </div>
+    <div id="projects-list"></div>
   </div>
 
-  <!-- New project page -->
-  <div id="page-new-project" style="display:none;">
+  
+
+
+  <div id="page-new-project" class="page" style="display:none;">
     <h2>Create New Project</h2>
 
     <label>Project Name:</label>
@@ -86,8 +97,11 @@
     <button onclick="showPage('projects')">Go Back</button>
   </div>
 
-  <!-- project detail -->
-  <div id="page-project-detail" style="display:none;">
+  
+
+
+
+  <div id="page-project-detail" class="page" style="display:none;">
     <button onclick="showPage('projects')">← Back</button>
     <h2 id="detail-name"></h2>
     <p id="detail-desc"></p>
@@ -95,7 +109,6 @@
     <button onclick="showEditForm()">Edit</button>
     <button onclick="deleteProject()">Delete</button>
 
-    <!-- edit form (hidden by default) -->
     <div id="edit-form" style="display:none;">
       <h3>Edit Project</h3>
 
@@ -110,6 +123,18 @@
     </div>
   </div>
 
+  
+
+
+
+
+  <div id="page-admin" class="page wide" style="display:none;">
+    <h2>Admin Panel</h2>
+    <p>Manage user roles below.</p>
+    <div id="admin-users-list"></div>
+  </div>
+
   <script src="js/app.js"></script>
 </body>
+
 </html>

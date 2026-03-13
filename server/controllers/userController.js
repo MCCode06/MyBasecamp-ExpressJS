@@ -20,6 +20,17 @@ const createUser = async (req, res) => {
   }
 };
 
+// GET /users
+const getAllUsers = async (req, res) => {
+  try {
+    const users = await User.getAllUsers();
+    users.forEach(u => delete u.password);
+    res.json(users);
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+};
+
 // GET /users/:id
 const getUser = async (req, res) => {
   try {
@@ -36,7 +47,7 @@ const getUser = async (req, res) => {
 const deleteUser = async (req, res) => {
   try {
     const deletedUser = await User.deleteUser(req.params.id);
-    if (!deleteUser) {
+    if (!deletedUser) {
       return res.status(404).json({ error: "User not found" });
     }
     res.json({ message: "User deleted successfully" });
@@ -52,7 +63,7 @@ const setAdmin = async (req, res) => {
     if (!user) {
       return res.status(404).json({ error: "User not found" });
     }
-    res.json({ message: "User promoted to admin user successfully" });
+    res.json({ message: "User promoted to admin successfully" });
   } catch (err) {
     res.status(500).json({ error: err.message });
   }
@@ -62,13 +73,13 @@ const setAdmin = async (req, res) => {
 const removeAdmin = async (req, res) => {
   try {
     const user = await User.removeAdmin(req.params.id);
-    if (user == nil) {
+    if (!user) {  
       return res.status(404).json({ error: "User not found" });
     }
-    res.json({ message: "Admin user degraded to user successfully" });
+    res.json({ message: "Admin removed successfully" });
   } catch (err) {
     res.status(500).json({ error: err.message });
   }
 };
 
-module.exports = { createUser, getUser, deleteUser, setAdmin, removeAdmin };
+module.exports = { createUser, getAllUsers, getUser, deleteUser, setAdmin, removeAdmin };

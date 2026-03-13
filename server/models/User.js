@@ -18,6 +18,15 @@ const findUserById = async (id) => {
   })
 }
 
+
+const getAllUsers = async () => {
+  return await prisma.user.findMany({
+    orderBy: {id: 'asc'}
+  })
+}
+
+
+
 const deleteUser = async (id) => {
   await prisma.user.delete({
     where: { id: parseInt(id) }
@@ -39,4 +48,4 @@ const removeAdmin = async (id) => {
   })
 }
 
-module.exports = { createUser, findUserByEmail, findUserById, deleteUser, setAdmin, removeAdmin }
+module.exports = { createUser, findUserByEmail, findUserById, getAllUsers, deleteUser, setAdmin, removeAdmin }
