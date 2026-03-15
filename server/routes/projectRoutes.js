@@ -6,7 +6,7 @@ const auth = require('../middleware/auth.js')
 const admin = require('../middleware/admin.js')
 
 router.post('/', auth, createProject)
-router.get('/', getAllProjects)
+router.get('/', auth, getAllProjects)
 router.get('/:id', getProject)
 router.put('/:id', updateProject)
 router.delete('/:id', deleteProject)

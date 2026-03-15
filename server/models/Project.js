@@ -6,8 +6,10 @@ const createProject = async (name, description, owner_id) => {
   })
 }
 
-const getAllProjects = async () => {
-  return await prisma.project.findMany()
+const getAllProjects = async (owner_id) => {
+  return await prisma.project.findMany({
+    where: { ownerId: parseInt(owner_id) }
+  })
 }
 
 const getProjectById = async (id) => {

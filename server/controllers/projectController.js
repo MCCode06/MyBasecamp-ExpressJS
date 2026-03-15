@@ -13,14 +13,15 @@ const createProject = async (req, res) => {
 };
 
 const getAllProjects = async (req, res) => {
-    try {
-        const projects = await Project.getAllProjects();
-        if (projects.length === 0) return res.status(404).json({ error: 'No projects found' });
-        res.json(projects);
-    } catch (err) {
-        res.status(500).json({ error: err.message });
-    }
-}
+  try {
+    const owner_id = req.session.user.id;
+    const projects = await Project.getAllProjects(owner_id);
+    res.json(projects);
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+};
+
 
 const getProject = async (req, res) => {
         try {
