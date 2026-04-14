@@ -2,15 +2,21 @@ const express = require("express");
 const session = require("express-session");
 require("dotenv").config();
 
+const path = require("path");
+
 const userRoutes = require('./routes/userRoutes')
 const sessionRoutes = require('./routes/sessionRoutes')
 const projectRoutes = require('./routes/projectRoutes')
 
 const app = express();
 
-app.use(express.json());
+app.set('view engine', 'ejs')
+app.set('views', path.join(__dirname, '../views'))
 
-app.use(express.static("public"));
+app.use(express.json())
+app.use(express.urlencoded({ extended: false }))
+app.use(express.static(path.join(__dirname, '../public')))
+
 
 app.use(
   session({
