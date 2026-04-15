@@ -1,4 +1,5 @@
 <%- include('partials/header') %>
+
 <main class="admin-page">
   <div class="container">
     <h1>Admin Dashboard</h1>
@@ -23,7 +24,6 @@
   </div>
 </main>
 <script>
-  // 1. Load all users on page load
   async function loadUsers() {
     const res = await fetch("/api/users");
     const users = await res.json();
@@ -51,21 +51,18 @@
       .join("");
   }
 
-  // 2. Promote user to Admin (Fixed syntax)
   async function makeAdmin(id) {
     if (!confirm("Promote this user to admin?")) return;
     await fetch(`/api/users/${id}/admin`, { method: "PUT" });
     loadUsers();
   }
 
-  // 3. Remove Admin role (Fixed syntax)
   async function removeAdmin(id) {
     if (!confirm("Remove admin privileges?")) return;
     await fetch(`/api/users/${id}/removeadmin`, { method: "PUT" });
     loadUsers();
   }
 
-  // 4. Delete user (Fixed syntax)
   async function deleteUser(id) {
     if (!confirm("Are you sure? This cannot be undone.")) return;
     await fetch(`/api/users/${id}`, { method: "DELETE" });

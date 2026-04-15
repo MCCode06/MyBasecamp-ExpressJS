@@ -1,6 +1,5 @@
 <%- include('partials/header') %>
 
-
     <main class="projects-page">
       <div class="projects-header">
         <h1>My Projects</h1>
@@ -14,7 +13,6 @@
         </button>
       </div>
 
-      <!-- NEW PROJECT FORM -->
       <div id="new-project-form" style="display: none" class="card">
         <h2>New Project</h2>
         <form onsubmit="createProject(event)">
@@ -46,12 +44,10 @@
         </form>
       </div>
 
-      <!-- PROJECTS LIST -->
       <div id="projects-list"></div>
     </main>
 
     <script>
-      // LOAD PROJECTS
       async function loadProjects() {
         const res = await fetch("/api/projects");
         const data = await res.json();
@@ -92,7 +88,6 @@
           .join("");
       }
 
-      // CREATE PROJECT
       async function createProject(e) {
         e.preventDefault();
         const name = document.getElementById("proj-name").value;
@@ -106,13 +101,11 @@
         loadProjects();
       }
 
-      // DELETE PROJECT
       async function deleteProject(id) {
         await fetch(`/api/projects/${id}`, { method: "DELETE" });
         loadProjects();
       }
 
-      // Function to switch between View and Edit mode
       function toggleEdit(id) {
         const viewDiv = document.getElementById(`view-mode-${id}`);
         const editDiv = document.getElementById(`edit-mode-${id}`);
@@ -126,7 +119,6 @@
         }
       }
 
-      // Function to send the PUT request to the server
       async function saveUpdate(id) {
         const name = document.getElementById(`edit-name-${id}`).value;
         const description = document.getElementById(`edit-desc-${id}`).value;
@@ -138,7 +130,7 @@
         });
 
         if (res.ok) {
-          loadProjects(); // Refresh the list to show new data
+          loadProjects(); 
         } else {
           const errorData = await res.json();
           alert("Update failed: " + (errorData.error || "Unknown error"));
