@@ -45,15 +45,27 @@ const updateProject = async (req, res) => {
 
 const deleteProject = async (req, res) => {
   try {
-    const deletedProject = await Project.deleteProject(req.params.id);
-    if (!deletedProject) {
-        return res.status(404).json({ error: 'Project not found' });
-    }
-    res.json({message: 'Project deleted successfully'});
+    const projectId = req.params.id;
+    const userId = req.session.user.id;
 
+    // 1. First, find the project
+    const project = await Project.getProjectById(projectId);
+
+    if (!project) {
+      return res.status(404).json({ error: 'Project not found' });
+    }
+
+    // 2. CHECK OWNERSHIP: Does the ownerId match the logged-in user?
+    if (project.ownerId !== userId) {
+      return res.status(403).json({ error: 'You do not have permission to delete this project' });
+    }
+
+    // 3. If everything is okay, delete it
+    await Project.deleteProject(projectId);
+    res.json({ message: 'Project deleted successfully' });
+    
   } catch (err) {
     res.status(500).json({ error: err.message });
   }
-}
-
+};
 module.exports = {createProject, getAllProjects, getProject, updateProject, deleteProject};

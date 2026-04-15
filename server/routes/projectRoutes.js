@@ -7,8 +7,8 @@ const admin = require('../middleware/admin.js')
 
 router.post('/', auth, createProject)
 router.get('/', auth, getAllProjects)
-router.get('/:id', getProject)
-router.put('/:id', updateProject)
-router.delete('/:id', deleteProject)
+router.get('/:id', auth, getProject)
+router.put('/:id', auth, updateProject)
+router.delete('/:id', auth, deleteProject)
 
 module.exports = router

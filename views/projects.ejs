@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Projects — MyBaseCamp</title>
+    <link rel="stylesheet" href="/css/style.css" />
+  </head>
+  <body>
+    <nav>
+      <a href="/">MyBaseCamp</a>
+      <div>
+        <span>👤 <%= user.name %></span>
+        <a href="/logout">Logout</a>
+      </div>
+    </nav>
+
+    <main class="projects-page">
+      <div class="projects-header">
+        <h1>My Projects</h1>
+        <button
+          onclick="
+            document.getElementById('new-project-form').style.display = 'block'
+          "
+          class="btn"
+        >
+          + New Project
+        </button>
+      </div>
+
+      <!-- NEW PROJECT FORM -->
+      <div id="new-project-form" style="display: none" class="card">
+        <h2>New Project</h2>
+        <form onsubmit="createProject(event)">
+          <label>Project Name</label>
+          <input
+            type="text"
+            id="proj-name"
+            placeholder="e.g. Website Redesign"
+            required
+          />
+          <label>Description</label>
+          <textarea
+            id="proj-desc"
+            placeholder="What's this project about?"
+          ></textarea>
+          <div style="display: flex; gap: 0.5rem">
+            <button type="submit" class="btn">Create</button>
+            <button
+              type="button"
+              onclick="
+                document.getElementById('new-project-form').style.display =
+                  'none'
+              "
+              class="btn-outline"
+            >
+              Cancel
+            </button>
+          </div>
+        </form>
+      </div>
+
+      <!-- PROJECTS LIST -->
+      <div id="projects-list"></div>
+    </main>
+
+    <script>
+      // LOAD PROJECTS
+      async function loadProjects() {
+        const res = await fetch("/api/projects");
+        const data = await res.json();
+        const list = document.getElementById("projects-list");
+        if (!data.length) {
+          list.innerHTML =
+            '<p style="color:#999;text-align:center;margin-top:2rem;">No projects yet. Create your first one!</p>';
+          return;
+        }
+        list.innerHTML = data
+          .map(
+            (p) => `
+  <div class="card" id="project-${p.id}">
+    <div id="view-mode-${p.id}" style="display:flex; justify-content:space-between; align-items:start;">
+      <div>
+        <h2>${p.name}</h2>
+        <p>${p.description || "No description"}</p>
+      </div>
+      <div style="display:flex; gap:0.5rem;">
+        <button onclick="toggleEdit(${p.id})" class="btn-outline">Edit</button>
+        <button onclick="deleteProject(${p.id})" class="btn-danger">Delete</button>
+      </div>
+    </div>
+
+    <div id="edit-mode-${p.id}" style="display:none;">
+      <label>Project Name</label>
+      <input type="text" id="edit-name-${p.id}" value="${p.name}" class="input-field" style="width:100%; margin-bottom:10px;">
+      <label>Description</label>
+      <textarea id="edit-desc-${p.id}" class="input-field" style="width:100%; margin-bottom:10px;">${p.description || ""}</textarea>
+      <div style="display:flex; gap:0.5rem;">
+        <button onclick="saveUpdate(${p.id})" class="btn">Save Changes</button>
+        <button onclick="toggleEdit(${p.id})" class="btn-outline">Cancel</button>
+      </div>
+    </div>
+  </div>
+`,
+          )
+          .join("");
+      }
+
+      // CREATE PROJECT
+      async function createProject(e) {
+        e.preventDefault();
+        const name = document.getElementById("proj-name").value;
+        const description = document.getElementById("proj-desc").value;
+        await fetch("/api/projects", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ name, description }),
+        });
+        document.getElementById("new-project-form").style.display = "none";
+        loadProjects();
+      }
+
+      // DELETE PROJECT
+      async function deleteProject(id) {
+        await fetch(`/api/projects/${id}`, { method: "DELETE" });
+        loadProjects();
+      }
+
+      // Function to switch between View and Edit mode
+      function toggleEdit(id) {
+        const viewDiv = document.getElementById(`view-mode-${id}`);
+        const editDiv = document.getElementById(`edit-mode-${id}`);
+
+        if (viewDiv.style.display === "none") {
+          viewDiv.style.display = "flex";
+          editDiv.style.display = "none";
+        } else {
+          viewDiv.style.display = "none";
+          editDiv.style.display = "block";
+        }
+      }
+
+      // Function to send the PUT request to the server
+      async function saveUpdate(id) {
+        const name = document.getElementById(`edit-name-${id}`).value;
+        const description = document.getElementById(`edit-desc-${id}`).value;
+
+        const res = await fetch(`/api/projects/${id}`, {
+          method: "PUT",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ name, description }),
+        });
+
+        if (res.ok) {
+          loadProjects(); // Refresh the list to show new data
+        } else {
+          const errorData = await res.json();
+          alert("Update failed: " + (errorData.error || "Unknown error"));
+        }
+      }
+
+      loadProjects();
+    </script>
+  </body>
+</html>
