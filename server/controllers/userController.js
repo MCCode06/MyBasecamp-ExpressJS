@@ -1,12 +1,12 @@
 const User = require("../models/User.js");
 const bcrypt = require("bcrypt");
-const { validationResult } = require('express-validator');
+const { validationResult } = require("express-validator");
 
 const createUser = async (req, res) => {
   try {
-    const errors = validationResult(req)
+    const errors = validationResult(req);
     if (!errors.isEmpty()) {
-      return res.status(400).json({ errors: errors.array() })
+      return res.status(400).json({ errors: errors.array() });
     }
     const { name, email, password } = req.body;
     const existingUser = await User.findUserByEmail(email);
@@ -25,7 +25,7 @@ const createUser = async (req, res) => {
 const getAllUsers = async (req, res) => {
   try {
     const users = await User.getAllUsers();
-    users.forEach(u => delete u.password);
+    users.forEach((u) => delete u.password);
     res.json(users);
   } catch (err) {
     res.status(500).json({ error: err.message });
@@ -48,7 +48,7 @@ const deleteUser = async (req, res) => {
     await User.deleteUser(req.params.id);
     res.json({ message: "User deleted successfully" });
   } catch (err) {
-    if (err.code === 'P2025') {
+    if (err.code === "P2025") {
       return res.status(404).json({ error: "User not found" });
     }
     res.status(500).json({ error: err.message });
@@ -60,7 +60,7 @@ const setAdmin = async (req, res) => {
     await User.setAdmin(req.params.id);
     res.json({ message: "User promoted to admin successfully" });
   } catch (err) {
-    if (err.code === 'P2025') {
+    if (err.code === "P2025") {
       return res.status(404).json({ error: "User not found" });
     }
     res.status(500).json({ error: err.message });
@@ -72,11 +72,18 @@ const removeAdmin = async (req, res) => {
     await User.removeAdmin(req.params.id);
     res.json({ message: "Admin removed successfully" });
   } catch (err) {
-    if (err.code === 'P2025') {
+    if (err.code === "P2025") {
       return res.status(404).json({ error: "User not found" });
     }
     res.status(500).json({ error: err.message });
   }
 };
 
-module.exports = { createUser, getAllUsers, getUser, deleteUser, setAdmin, removeAdmin };
+module.exports = {
+  createUser,
+  getAllUsers,
+  getUser,
+  deleteUser,
+  setAdmin,
+  removeAdmin,
+};

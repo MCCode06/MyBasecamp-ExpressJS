@@ -1,7 +1,6 @@
 const User = require('../models/User.js')
 const bcrypt = require('bcrypt')
 
-// POST /session 
 const signIn = async (req, res) => {
   try {
     const { email, password } = req.body
@@ -20,7 +19,6 @@ const signIn = async (req, res) => {
   }
 }
 
-// DELETE /session 
 const signOut = async (req, res) => {
   req.session.destroy()
   res.json({ message: "User logged out" })
