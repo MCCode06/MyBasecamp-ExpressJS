@@ -9,7 +9,7 @@ const registerValidation = [
   body('name')
     .trim()
     .escape()
-    .isLength({ min: 3, max: 50 })
+    .isLength({ min: 3, max: 20 })
     .withMessage('Name must be minimum 3 and maximum 20 characters'),
 
   body('email')
